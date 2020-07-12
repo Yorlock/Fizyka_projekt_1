@@ -51,8 +51,8 @@ class Atom: # stworz obiekt kulka/atom
             helper_y = 0
             while not is_fine:
                 repeat_loop = False
-                helper_x = random.randint(left + r + 2, right - r - 2)
-                helper_y = random.randint(up + r + 2, down - r - 2)
+                helper_x = random.randint(left + r + 1, right - r - 1)
+                helper_y = random.randint(up + r + 1, down - r - 1)
                 for atom in atoms:
                     if not math.sqrt(abs(atom.x - helper_x)**2 + abs(atom.y - helper_y)**2) > 2 * r:
                         repeat_loop = True
@@ -61,8 +61,8 @@ class Atom: # stworz obiekt kulka/atom
                     break
             self.x = helper_x
             self.y = helper_y
-        self.x_speed = random.uniform(0.01, 5)
-        self.y_speed = random.uniform(0.01, 5)
+        self.x_speed = random.uniform(-5, 5)
+        self.y_speed = random.uniform(-5, 5)
 
     def drawing_circle(self, where, atom): #  narysuj kulkę
         import pygame

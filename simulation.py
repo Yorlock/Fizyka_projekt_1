@@ -31,12 +31,14 @@ def simulation_func(r, n, d, eta, M):
     pygame.display.flip()
     x_upper = 2  #  podmienic z danymi do wykresu
     x_bottom = 2  #
+    y_upper = 2
+    y_bottom = 2
     list_font = pygame.font.SysFont('Corbel', 16)
     while True:
         x_upper += 0.005  #
-        y_upper = random.randint(1, 100)  #
+        y_upper += 2  #
         x_bottom += 0.005  #
-        y_bottom = random.randint(1, 100)  # podmienic z danymi do wykresu
+        y_bottom += 2  # podmienic z danymi do wykresu
         list_u_x = list_font.render(str(x_upper)[:6] + ' s', True, (110, 110, 110))
         list_u_y = list_font.render(str(y_upper)[:6], True, (110, 110, 110)) # najnowsza wartosc obok wykresu
         list_d_x = list_font.render(str(x_bottom)[:6] + ' s', True, (110, 110, 110))
@@ -55,6 +57,7 @@ def simulation_func(r, n, d, eta, M):
         main.window.blit(list_u_x, (1293, 334))
         main.window.blit(list_u_y, (1055, 50))
         main.window.blit(list_d_x, (1293, 684)) #  najnowsza wartosc zostanie wyswietlona obok wykresu
+        main.window.blit(list_d_y, (1055, 400))
         for atom in atoms: #  wyswietla wszystkie atomy
             atom.drawing_circle(main.window, atom)
         pygame.display.update()  # odswieżenie
