@@ -1,3 +1,4 @@
+from func import *
 def simulation_func(r, n, d, eta, M):
     import main
     import classes
