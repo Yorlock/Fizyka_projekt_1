@@ -68,28 +68,36 @@ def simulation_func(r, n, d, eta, M):
             for j in range(len(atoms)):
                 if i > j:
                     if func.distance(atoms[i].x, atoms[i].y, atoms[j].x,
-                                     atoms[j].y) <= 2 * r:  # sprawdzamy czy się zderzyly
+                                     atoms[j].y) <= 2 * r + math.floor(1/10 * r):  # sprawdzamy czy się zderzyly
                         tmp_x = int(atoms[i].x_speed)
+                        atoms[i].x -= atoms[i].x_speed
+                        atoms[j].x -= atoms[j].x_speed
                         atoms[i].x_speed = int(atoms[j].x_speed)
                         atoms[j].x_speed = int(tmp_x)
+                        atoms[i].x += atoms[i].x_speed
+                        atoms[j].x += atoms[j].x_speed
                         tmp_y = int(atoms[i].y_speed)
+                        atoms[i].y -= atoms[i].y_speed
+                        atoms[j].y -= atoms[j].y_speed
                         atoms[i].y_speed = int(atoms[j].y_speed)
                         atoms[j].y_speed = int(tmp_y)
+                        atoms[i].y += atoms[i].y_speed
+                        atoms[j].y += atoms[j].y_speed
 
         # zderzenia ze scianami
         for atom in atoms:
             if atom.x + atom.r + d >= right_wall:  # prawa
                 atom.x_speed = -atom.x_speed
-                atom.x = right_wall - atom.r - 1
+                atom.x = right_wall - atom.r - math.floor(1/10 * r)
             elif atom.x - atom.r + d <= left_wall:  # lewa
                 atom.x_speed = -atom.x_speed
-                atom.x = left_wall + atom.r + 1
+                atom.x = left_wall + atom.r + math.floor(1/10 * r)
             if atom.y - atom.r + d <= up_wall:  # gorna
                 atom.y_speed = -atom.y_speed
-                atom.y = up_wall + atom.r + 1
+                atom.y = up_wall + atom.r + math.floor(1/10 * r)
             elif atom.y + atom.r + d >= down_wall:  # dolna
                 atom.y_speed = -atom.y_speed
-                atom.y = down_wall - atom.r - 1
+                atom.y = down_wall - atom.r - math.floor(1/10 * r)
             atom.drawing_circle(main.window, atom)
 
 
