@@ -63,6 +63,9 @@ class Atom: # stworz obiekt kulka/atom
             self.y = helper_y
         self.x_speed = random.randint(-5, 5)
         self.y_speed = random.randint(-5, 5)
+        while self.x_speed == 0 and self.y_speed == 0:
+            self.x_speed = random.randint(-5, 5)
+            self.y_speed = random.randint(-5, 5)
 
     def drawing_circle(self, where, atom): #  narysuj kulkę
         import pygame
