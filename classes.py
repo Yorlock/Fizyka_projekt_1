@@ -1,10 +1,3 @@
-import pygame
-import func
-import math
-import random
-import time
-import sys
-
 
 class Plot: #  wykres
 
@@ -18,11 +11,9 @@ class Plot: #  wykres
         self.fig = fig
         self.ax = ax
 
-    def update_plot(self, x, y, data_x, data_y, plot): #  aktualizacja wykresu
+    def update_plot(self, data_x, data_y, plot): #  aktualizacja wykresu
         import matplotlib.backends.backend_agg as agg
         import pygame
-        data_x.append(x)
-        data_y.append(y)
         plot.ax.plot(data_x, data_y)
         canvas = agg.FigureCanvasAgg(plot.fig)
         canvas.draw()
@@ -33,10 +24,10 @@ class Plot: #  wykres
         return surf
 
 
-class Atom: # stworz obiekt kulka/atom
+
+class Atom:  # stworz obiekt kulka/atom
     def __init__(self, r, color, right, down, up, left, atoms, rgb):
         import random
-        import simulation
         import math
         self.m = 1
         self.r = r

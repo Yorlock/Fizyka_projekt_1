@@ -1,4 +1,4 @@
-def simulation_func(r, n, d, eta, M):
+def simulation_func(r, n, d, eta, M, time):
     import main
     import classes
     import func
@@ -28,30 +28,33 @@ def simulation_func(r, n, d, eta, M):
     # list_data_y_bottom = []
     # plot_upper = classes.Plot(3, 3, 100, 'white', 'white', list_data_x_upper, list_data_y_upper)  # tworzy wykresy
     # plot_bottom = classes.Plot(3, 3, 100, 'white', 'white', list_data_x_bottom, list_data_y_bottom)
-    screen = pygame.display.get_surface()
     pygame.display.flip()
     # Okienka z wartosciami
     value_info_time = 'Czas: '
     value_info_1 = 'Cos tam cos tam: '
-    value_info_2 = 'xD: ' # zmienic wartosci
+    value_info_2 = 'xD: '  # zmienic wartosci
     value_info_3 = 'Testowy tekst: '
     value_info_rect_time = pygame.Rect(990, 25, 340, 40)
     value_info_rect_1 = pygame.Rect(990, 225, 340, 40)
     value_info_rect_2 = pygame.Rect(990, 425, 340, 40)
     value_info_rect_3 = pygame.Rect(990, 625, 340, 40)
-    value_1 = 2
-    value_2 = 2 # podmienic z danymi do wykresu
-    value_3 = 2
+    value_1 = 112
+    value_2 = 112  # podmienic z danymi do wykresu
+    value_3 = 112
     list_font = pygame.font.SysFont('Corbel', 32)  # czcionki wyswietlanych wartosci
     for atom in atoms:  # wyswietla wszystkie atomy
         atom.drawing_circle(main.window, atom)
     clock = pygame.time.Clock()
-    while True:
-        clock.tick(60)
+    FPS = 60
+    loop_time = 0  # czas do zakonczenia symulacji (liczba FPS * liczba sekund)
+    time_time = 0  # wyswietlany czas co kazdą klatkę (1 sek / 60 odswiezen) = 0.016667
+    while FPS * time > loop_time:
+        clock.tick(FPS)
         value_1 += 2  #
         value_2 += 0.005  # Wartości do testow, ostatecznie dac tutaj obliczenia ktore chcemy wyswietlic
-        value_3 += 2  #
-        list_1 = list_font.render(value_info_time + str(pygame.time.get_ticks())[:6] + ' ms', True, (110, 110, 110)) # liczy czas od rozpoczecia
+        value_3 += 5  #
+        time_time += 0.016667
+        list_1 = list_font.render(value_info_time + str(time_time)[:6] + ' ms', True, (110, 110, 110)) # liczy czas od rozpoczecia
         list_2 = list_font.render(value_info_1 + str(value_1)[:6], True, (110, 110, 110))  #
         list_3 = list_font.render(value_info_2 + str(value_2)[:6], True, (110, 110, 110))  #
         list_4 = list_font.render(value_info_3 + str(value_3)[:6], True, (110, 110, 110))  #
@@ -112,6 +115,6 @@ def simulation_func(r, n, d, eta, M):
                 atom.y_speed = -atom.y_speed
                 atom.y = down_wall - atom.r - math.floor(1/10 * r)
             atom.drawing_circle(main.window, atom)
-
-
         pygame.display.update()  # odswieżenie
+        loop_time += 1
+    return value_1, value_2, value_3 # zwracamy wartosci do tablicy ( 1) srednia droga, 2) czestosc zderzen, 3) liczba atomow)
