@@ -3,7 +3,6 @@ def simulation_func(r, n, d, eta, M, time):
     import classes
     import func
     import pygame
-    import random
     import sys
     import math
     # import matplotlib
@@ -34,25 +33,24 @@ def simulation_func(r, n, d, eta, M, time):
     value_info_1 = 'Śr. droga swobodna: '
     value_info_2 = 'Liczba zderzeń: '  # zmienic wartosci
     value_info_3 = 'Liczba atomów: '
-    value_info_rect_time = pygame.Rect(990, 25, 340, 40)
-    value_info_rect_1 = pygame.Rect(990, 225, 340, 40)
-    value_info_rect_2 = pygame.Rect(990, 425, 340, 40)
-    value_info_rect_3 = pygame.Rect(990, 625, 340, 40)
+    value_info_rect_time = pygame.Rect(990, 25, 360, 40)
+    value_info_rect_1 = pygame.Rect(990, 225, 360, 40)
+    value_info_rect_2 = pygame.Rect(990, 425, 360, 40)
+    value_info_rect_3 = pygame.Rect(990, 625, 360, 40)
     sr_droga = 0
     droga_swobodna = 0
     tab_droga_swobodna = []
-    DeltaN = 0  
-    czestosc_zderzen = 0
+    DeltaN = 0
+    #  czestosc_zderzen = 0
     list_font = pygame.font.SysFont('Corbel', 32)  # czcionki wyswietlanych wartosci
     for atom in atoms:  # wyswietla wszystkie atomy
         atom.drawing_circle(main.window, atom)
     clock = pygame.time.Clock()
-    FPS = 60
     loop_time = 0  # czas do zakonczenia symulacji (liczba FPS * liczba sekund)
     time_time = 0  # wyswietlany czas co kazdą klatkę (1 sek / 60 odswiezen) = 0.016667
-    while FPS * time > loop_time:
+    while M * time > loop_time:
         droga_swobodna += func.distance(0, 0, atoms[0].x_speed, atoms[0].y_speed)
-        clock.tick(FPS)
+        clock.tick(time)
         time_time += 0.016667
         list_1 = list_font.render(value_info_time + str(time_time)[:6] + ' s', True, (110, 110, 110)) # liczy czas od rozpoczecia
         list_2 = list_font.render(value_info_1 + str(sr_droga)[:6], True, (110, 110, 110))  #
