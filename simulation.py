@@ -31,16 +31,18 @@ def simulation_func(r, n, d, eta, M, time):
     pygame.display.flip()
     # Okienka z wartosciami
     value_info_time = 'Czas: '
-    value_info_1 = 'Cos tam cos tam: '
-    value_info_2 = 'xD: '  # zmienic wartosci
-    value_info_3 = 'Testowy tekst: '
+    value_info_1 = 'Śr. droga swobodna: '
+    value_info_2 = 'Liczba zderzeń: '  # zmienic wartosci
+    value_info_3 = 'Liczba atomów: '
     value_info_rect_time = pygame.Rect(990, 25, 340, 40)
     value_info_rect_1 = pygame.Rect(990, 225, 340, 40)
     value_info_rect_2 = pygame.Rect(990, 425, 340, 40)
     value_info_rect_3 = pygame.Rect(990, 625, 340, 40)
-    value_1 = 112
-    value_2 = 112  # podmienic z danymi do wykresu
-    value_3 = 112
+    sr_droga = 0
+    droga_swobodna = 0
+    tab_droga_swobodna = []
+    DeltaN = 0  
+    czestosc_zderzen = 0
     list_font = pygame.font.SysFont('Corbel', 32)  # czcionki wyswietlanych wartosci
     for atom in atoms:  # wyswietla wszystkie atomy
         atom.drawing_circle(main.window, atom)
@@ -49,15 +51,13 @@ def simulation_func(r, n, d, eta, M, time):
     loop_time = 0  # czas do zakonczenia symulacji (liczba FPS * liczba sekund)
     time_time = 0  # wyswietlany czas co kazdą klatkę (1 sek / 60 odswiezen) = 0.016667
     while FPS * time > loop_time:
+        droga_swobodna += func.distance(0, 0, atoms[0].x_speed, atoms[0].y_speed)
         clock.tick(FPS)
-        value_1 += 2  #
-        value_2 += 0.005  # Wartości do testow, ostatecznie dac tutaj obliczenia ktore chcemy wyswietlic
-        value_3 += 5  #
         time_time += 0.016667
-        list_1 = list_font.render(value_info_time + str(time_time)[:6] + ' ms', True, (110, 110, 110)) # liczy czas od rozpoczecia
-        list_2 = list_font.render(value_info_1 + str(value_1)[:6], True, (110, 110, 110))  #
-        list_3 = list_font.render(value_info_2 + str(value_2)[:6], True, (110, 110, 110))  #
-        list_4 = list_font.render(value_info_3 + str(value_3)[:6], True, (110, 110, 110))  #
+        list_1 = list_font.render(value_info_time + str(time_time)[:6] + ' s', True, (110, 110, 110)) # liczy czas od rozpoczecia
+        list_2 = list_font.render(value_info_1 + str(sr_droga)[:6], True, (110, 110, 110))  #
+        list_3 = list_font.render(value_info_2 + str(DeltaN)[:6], True, (110, 110, 110))  #
+        list_4 = list_font.render(value_info_3 + str(n)[:6], True, (110, 110, 110))  #
         # surf_u = plot_upper.update_plot(x_upper, y_upper, list_data_x_upper, list_data_y_upper, plot_upper)
         # surf_b = plot_bottom.update_plot(x_bottom, y_bottom, list_data_x_bottom, list_data_y_bottom, plot_bottom)  # aktualizacja wykresu
         pygame.display.flip()
@@ -85,6 +85,11 @@ def simulation_func(r, n, d, eta, M, time):
                 if i > j:
                     if func.distance(atoms[i].x, atoms[i].y, atoms[j].x,
                                      atoms[j].y) <= 2 * r + math.floor(1/10 * r):  # sprawdzamy czy się zderzyly
+                        if j == 0:
+                            DeltaN += 1
+                            tab_droga_swobodna.append(droga_swobodna)
+                            droga_swobodna = 0
+                            sr_droga = sum(tab_droga_swobodna) / DeltaN
                         tmp_x = int(atoms[i].x_speed)
                         atoms[i].x -= atoms[i].x_speed
                         atoms[j].x -= atoms[j].x_speed
@@ -117,4 +122,5 @@ def simulation_func(r, n, d, eta, M, time):
             atom.drawing_circle(main.window, atom)
         pygame.display.update()  # odswieżenie
         loop_time += 1
-    return value_1, value_2, value_3 # zwracamy wartosci do tablicy ( 1) srednia droga, 2) czestosc zderzen, 3) liczba atomow)
+    czestosc_zderzen = DeltaN / time #ZMIENIŃ TIME JAK OGARNIEMY DELTAT !!!!
+    return sr_droga, czestosc_zderzen, n # zwracamy wartosci do tablicy ( 1) srednia droga, 2) czestosc zderzen, 3) liczba atomow)
