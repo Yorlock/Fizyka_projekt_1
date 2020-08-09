@@ -1,187 +1,126 @@
-import pygame
-import func
-import plot_menu
-import sys
-import simulation
-
-# R - promień
-# N - liczba atomow
-# 𝜂 - "eta"
-# H = 𝜂𝐻 * R wysokość pojemnika
-# L = 𝜂L * R szerokość pojemnika
-# pamiętać, że N <= 1/4 * 𝜂𝐻 * 𝜂L
-# d - tolerancja zderzenia, przy czym d <= 1/10 * R
-# t - czas, przy czym 𝛿𝑡 ≈ 1/𝜅V ; 𝜅 >= min(𝜂𝐻,𝜂𝐿) i 𝑡𝑖=𝑖 𝛿𝑡
-# proporcje zbiornika 𝜂 = H/L = 𝜂𝐻/𝜂𝐿 = 1
-# Δ𝑡=𝑀 𝛿𝑡 - czerwony atom doznaje Δ𝑁 zderzeń z innymi cząstkami, M >= 10
-# 𝜆̅ - srednia droga
-# 𝑛 = Δ𝑁/Δ𝑡 - Częstość zderzeń na jednostkę czasu
-# zmienne do wprowadzenia - R, 𝜂𝐻, 𝜂L, N, d - z czego  𝜂𝐻 = 𝜂L
-
-
-pygame.init()
-
-color_light = (155, 155, 155)
-color_dark = (15, 15, 15)
-color_input_active = pygame.Color('lightskyblue3')  # rozne kolory
-color_input_passive = pygame.Color('gray15')
-
-color_r = color_input_passive
-color_n = color_input_passive  # kolory text containerow
-color_d = color_input_passive
-color_eta = color_input_passive
-color_m = color_input_passive
-color_time = color_input_passive
-color_repeat = color_input_passive
-color_change = color_input_passive
-active_r = False
-active_n = False  # sprawdza czy text container zostal klikniety
-active_d = False
-active_eta = False
-active_m = False
-active_time = False
-active_repeat = False
-active_change = False
-user_input_font = pygame.font.Font(None, 32)  #czcionki
-button_font = pygame.font.SysFont('Corbel', 70)
-
-user_input_r = '20'  #przechowuje tekst wpisany przez gracza, a dokladnie R
-user_info_r = 'Promień atomów: '
-user_input_rect_r = pygame.Rect(500, 70, 140, 32)
-user_input_n = '20'  #przechowuje tekst wpisany przez gracza, a dokladnie N
-user_info_n = 'Liczba atomów w pojemniku: '
-user_input_rect_n = pygame.Rect(500, 150, 140, 32)
-user_input_d = '0.5'  #przechowuje tekst wpisany przez gracza, a dokladnie d
-user_info_d = 'Tolerancja zderzenia: '
-user_input_rect_d = pygame.Rect(500, 230, 140, 32)
-user_input_eta = '30'  #przechowuje tekst wpisany przez gracza, a dokladnie 𝜂𝐻 albo 𝜂L
-user_info_eta = 'Wartość eta H i eta L: '
-user_input_rect_eta = pygame.Rect(500, 310, 140, 32)
-user_input_m = '10'  #przechowuje tekst wpisany przez gracza, a dokladnie R
-user_info_m = 'Wartość M: '
-user_input_rect_m = pygame.Rect(500, 390, 140, 32)
-user_input_time = '1'  #przechowuje tekst wpisany przez gracza, a dokladnie R
-user_info_time = 'Czas symulacji: '
-user_input_rect_time = pygame.Rect(500, 470, 140, 32)
-user_input_repeat = '1'  #przechowuje tekst wpisany przez gracza, a dokladnie R
-user_info_repeat = 'Liczba symulacji: '
-user_input_rect_repeat = pygame.Rect(500, 550, 140, 32)
-user_input_change = '1'  #przechowuje tekst wpisany przez gracza, a dokladnie R
-user_info_change = 'Dodaj atom co symulację: '
-user_input_rect_change = pygame.Rect(500, 630, 140, 32)
-start_rect = pygame.Rect(800, 50, 540, 650)
-window = pygame.display.set_mode((1400, 750)) #tworzymy screen
-while True:
-    mouse = pygame.mouse.get_pos()  # pozycja myszki
-    window.fill((0, 0, 0))  # background
-    for event in pygame.event.get():  #eventy czyli np ruszenie muszką, klikniecie czegoś, wpisanie
-        if event.type == pygame.QUIT:  #klikniecie "X" = wyjscie z programu
-            pygame.quit()
-            sys.exit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if 800 <= mouse[0] <= 1340 and 50 <= mouse[1] <= 700 and user_input_r != '' \
-                    and user_input_n != '' and user_input_d != '' and user_input_eta != '' and user_input_m != '' and user_input_time != '' and user_input_repeat != '' and user_input_change != '':  # rozpoczyna symulację
-                i = 0
-                numAtoms = []
-                ave_s = []
-                freq = []
-                while i < int(user_input_repeat):
-                    s, f, at = simulation.simulation_func(int(user_input_r), int(user_input_n) + i * int(user_input_change), float(user_input_d), int(user_input_eta), int(user_input_m), int(user_input_time))
-                    numAtoms.append(at)
-                    ave_s.append(s)
-                    freq.append(f)
-                    i += 1
-                plot_menu.plot_menu(numAtoms, ave_s, freq)
+def simulation_func(r, n, d, eta, M, time):
+    import main
+    import classes
+    import func
+    import pygame
+    import random
+    import sys
+    import math
+    # import matplotlib
+    # matplotlib.use("Agg")
+    width_container = r * eta
+    height_container = r * eta
+    up_wall = 25
+    left_wall = 125
+    down_wall = height_container + up_wall  # odpowiednio gorna, lewa, dolna, prawa sciana pojemnika
+    right_wall = width_container + left_wall
+    container = pygame.Rect(left_wall, up_wall, width_container, height_container)  # pojemnik
+    atoms = []  # lista z kulkami/atomami
+    red_atom = classes.Atom(r, 'red', right_wall, down_wall, up_wall, left_wall, atoms,
+                            (255, 0, 0))  # tworzy czerwony atom
+    atoms.append(red_atom)
+    for i in range(n - 1):  # tworzy niebieskie atomy
+        blue_atom = classes.Atom(r, 'blue', right_wall, down_wall, up_wall, left_wall, atoms, (0, 0, 255))
+        atoms.append(blue_atom)
+    # list_data_x_upper = []
+    # list_data_y_upper = []
+    # list_data_x_bottom = []  # lista z danymi do wykresu
+    # list_data_y_bottom = []
+    # plot_upper = classes.Plot(3, 3, 100, 'white', 'white', list_data_x_upper, list_data_y_upper)  # tworzy wykresy
+    # plot_bottom = classes.Plot(3, 3, 100, 'white', 'white', list_data_x_bottom, list_data_y_bottom)
+    pygame.display.flip()
+    # Okienka z wartosciami
+    value_info_time = 'Czas: '
+    value_info_1 = 'Śr. droga swobodna: '
+    value_info_2 = 'Liczba zderzeń: '  # zmienic wartosci
+    value_info_3 = 'Liczba atomów: '
+    value_info_rect_time = pygame.Rect(990, 25, 340, 40)
+    value_info_rect_1 = pygame.Rect(990, 225, 340, 40)
+    value_info_rect_2 = pygame.Rect(990, 425, 340, 40)
+    value_info_rect_3 = pygame.Rect(990, 625, 340, 40)
+    sr_droga = 0
+    droga_swobodna = 0
+    tab_droga_swobodna = []
+    DeltaN = 0  
+    czestosc_zderzen = 0
+    list_font = pygame.font.SysFont('Corbel', 32)  # czcionki wyswietlanych wartosci
+    for atom in atoms:  # wyswietla wszystkie atomy
+        atom.drawing_circle(main.window, atom)
+    clock = pygame.time.Clock()
+    FPS = 60
+    loop_time = 0  # czas do zakonczenia symulacji (liczba FPS * liczba sekund)
+    time_time = 0  # wyswietlany czas co kazdą klatkę (1 sek / 60 odswiezen) = 0.016667
+    while FPS * time > loop_time:
+        droga_swobodna += func.distance(0, 0, atoms[0].x_speed, atoms[0].y_speed)
+        clock.tick(FPS)
+        time_time += 0.016667
+        list_1 = list_font.render(value_info_time + str(time_time)[:6] + ' s', True, (110, 110, 110)) # liczy czas od rozpoczecia
+        list_2 = list_font.render(value_info_1 + str(sr_droga)[:6], True, (110, 110, 110))  #
+        list_3 = list_font.render(value_info_2 + str(DeltaN)[:6], True, (110, 110, 110))  #
+        list_4 = list_font.render(value_info_3 + str(n)[:6], True, (110, 110, 110))  #
+        # surf_u = plot_upper.update_plot(x_upper, y_upper, list_data_x_upper, list_data_y_upper, plot_upper)
+        # surf_b = plot_bottom.update_plot(x_bottom, y_bottom, list_data_x_bottom, list_data_y_bottom, plot_bottom)  # aktualizacja wykresu
+        pygame.display.flip()
+        main.window.fill((0, 0, 0))
+        # screen.blit(surf_u, (1050, 50))  # wyswietla wykres
+        # screen.blit(surf_b, (1050, 400))
+        pygame.draw.rect(main.window, main.color_light, container, 2)  # rysuje pojemnik
+        for event in pygame.event.get():  # eventy czyli np ruszenie muszką, klikniecie czegoś, wpisanie
+            if event.type == pygame.QUIT:  # klikniecie "X" = wyjscie z programu
                 pygame.quit()
                 sys.exit()
-            active_r = func.collision_for_rect(user_input_rect_r.collidepoint(event.pos))
-            active_n = func.collision_for_rect(user_input_rect_n.collidepoint(event.pos))
-            active_d = func.collision_for_rect(user_input_rect_d.collidepoint(event.pos)) #  sprawdza czy kursor jest na prostokacie + zostal wybrany
-            active_eta = func.collision_for_rect(user_input_rect_eta.collidepoint(event.pos))
-            active_m = func.collision_for_rect(user_input_rect_m.collidepoint(event.pos))
-            active_time = func.collision_for_rect(user_input_rect_time.collidepoint(event.pos))
-            active_repeat = func.collision_for_rect(user_input_rect_repeat.collidepoint(event.pos))
-            active_change = func.collision_for_rect(user_input_rect_change.collidepoint(event.pos))
+        pygame.draw.rect(main.window, main.color_light, value_info_rect_time, 2)
+        pygame.draw.rect(main.window, main.color_light, value_info_rect_1, 2)
+        pygame.draw.rect(main.window, main.color_light, value_info_rect_2, 2) # rysuje okienka na wartosci
+        pygame.draw.rect(main.window, main.color_light, value_info_rect_3, 2)
+        main.window.blit(list_1, (value_info_rect_time.x + 5, value_info_rect_time.y + 5))
+        main.window.blit(list_2, (value_info_rect_1.x + 5, value_info_rect_1.y + 5))
+        main.window.blit(list_3, (value_info_rect_2.x + 5, value_info_rect_2.y + 5))
+        main.window.blit(list_4, (value_info_rect_3.x + 5, value_info_rect_3.y + 5))  # wyswietl na ekran najnowsze wartosci
+        # zderzenia między kulkami
+        for i in range(len(atoms)):  # przelatujemy przez wszystkie mozliwe zderzenia bez powtorzen
+            atoms[i].x += atoms[i].x_speed  # testowe latanie
+            atoms[i].y += atoms[i].y_speed
+            for j in range(len(atoms)):
+                if i > j:
+                    if func.distance(atoms[i].x, atoms[i].y, atoms[j].x,
+                                     atoms[j].y) <= 2 * r + math.floor(1/10 * r):  # sprawdzamy czy się zderzyly
+                        if j == 0:
+                            DeltaN += 1
+                            tab_droga_swobodna.append(droga_swobodna)
+                            droga_swobodna = 0
+                            sr_droga = sum(tab_droga_swobodna) / DeltaN
+                        tmp_x = int(atoms[i].x_speed)
+                        atoms[i].x -= atoms[i].x_speed
+                        atoms[j].x -= atoms[j].x_speed
+                        atoms[i].x_speed = int(atoms[j].x_speed)
+                        atoms[j].x_speed = int(tmp_x)
+                        atoms[i].x += atoms[i].x_speed
+                        atoms[j].x += atoms[j].x_speed
+                        tmp_y = int(atoms[i].y_speed)
+                        atoms[i].y -= atoms[i].y_speed
+                        atoms[j].y -= atoms[j].y_speed
+                        atoms[i].y_speed = int(atoms[j].y_speed)
+                        atoms[j].y_speed = int(tmp_y)
+                        atoms[i].y += atoms[i].y_speed
+                        atoms[j].y += atoms[j].y_speed
 
-        if event.type == pygame.KEYDOWN:  # pisanie w text containerze
-            if active_r:
-                user_input_r = func.write_or_delete_in_text_container(user_input_r, event.key, event.unicode)
-            elif active_n:
-                user_input_n = func.write_or_delete_in_text_container(user_input_n, event.key, event.unicode) #  dopisz/usun tekst
-            elif active_d:
-                user_input_d = func.write_or_delete_in_text_container(user_input_d, event.key, event.unicode)
-            elif active_eta:
-                user_input_eta = func.write_or_delete_in_text_container(user_input_eta, event.key, event.unicode)
-            elif active_m:
-                user_input_m = func.write_or_delete_in_text_container(user_input_m, event.key, event.unicode)
-            elif active_time:
-                user_input_time = func.write_or_delete_in_text_container(user_input_time, event.key, event.unicode)
-            elif active_repeat:
-                user_input_repeat = func.write_or_delete_in_text_container(user_input_repeat, event.key, event.unicode)
-            elif active_change:
-                user_input_change = func.write_or_delete_in_text_container(user_input_change, event.key, event.unicode)
-    if 800 <= mouse[0] <= 1340 and 50 <= mouse[1] <= 700 and user_input_r != '' \
-                    and user_input_n != '' and user_input_d != '' and user_input_eta != '' and user_input_m != '' and user_input_time != '' and user_input_repeat != '' and user_input_change != '':  # kolory button
-        pygame.draw.rect(window, color_light, start_rect)
-    else:
-        pygame.draw.rect(window, color_dark, start_rect)
-    color_r = func.is_active(active_r)
-    color_n = func.is_active(active_n)  # zmienia kolor text containera
-    color_d = func.is_active(active_d)
-    color_eta = func.is_active(active_eta)
-    color_m = func.is_active(active_m)
-    color_time = func.is_active(active_time)
-    color_repeat = func.is_active(active_repeat)
-    color_change = func.is_active(active_change)
-    pygame.draw.rect(window, color_r, user_input_rect_r, 2)
-    pygame.draw.rect(window, color_n, user_input_rect_n, 2)  # rysuje text containery
-    pygame.draw.rect(window, color_d, user_input_rect_d, 2)
-    pygame.draw.rect(window, color_eta, user_input_rect_eta, 2)
-    pygame.draw.rect(window, color_m, user_input_rect_m, 2)
-    pygame.draw.rect(window, color_time, user_input_rect_time, 2)
-    pygame.draw.rect(window, color_repeat, user_input_rect_repeat, 2)
-    pygame.draw.rect(window, color_change, user_input_rect_change, 2)
-    text_surface_r = user_input_font.render(user_input_r, True, (255, 255, 255))
-    text_surface_n = user_input_font.render(user_input_n, True, (255, 255, 255))
-    text_surface_d = user_input_font.render(user_input_d, True, (255, 255, 255))
-    text_surface_eta = user_input_font.render(user_input_eta, True, (255, 255, 255))  # generowanie wszyskich tekstow (rownież te ktore użytkownik wprowadza)
-    text_surface_m = user_input_font.render(user_input_m, True, (255, 255, 255))
-    text_surface_time = user_input_font.render(user_input_time, True, (255, 255, 255))
-    text_surface_repeat = user_input_font.render(user_input_repeat, True, (255, 255, 255))
-    text_surface_change = user_input_font.render(user_input_change, True, (255, 255, 255))
-    start_text = button_font.render('START', True, (255, 255, 255))
-    text_surface_r_info = user_input_font.render(user_info_r, True, (255, 255, 255))
-    text_surface_n_info = user_input_font.render(user_info_n, True, (255, 255, 255))
-    text_surface_d_info = user_input_font.render(user_info_d, True, (255, 255, 255))
-    text_surface_eta_info = user_input_font.render(user_info_eta, True, (255, 255, 255))
-    text_surface_m_info = user_input_font.render(user_info_m, True, (255, 255, 255))
-    text_surface_time_info = user_input_font.render(user_info_time, True, (255, 255, 255))
-    text_surface_repeat_info = user_input_font.render(user_info_repeat, True, (255, 255, 255))
-    text_surface_change_info = user_input_font.render(user_info_change, True, (255, 255, 255))
-    window.blit(text_surface_r_info, (100, 80))
-    window.blit(text_surface_n_info, (100, 160))
-    window.blit(text_surface_d_info, (100, 240))  # wyswietl
-    window.blit(text_surface_eta_info, (100, 320))
-    window.blit(text_surface_m_info, (100, 400))
-    window.blit(text_surface_time_info, (100, 480))
-    window.blit(text_surface_repeat_info, (100, 560))
-    window.blit(text_surface_change_info, (100, 640))
-    window.blit(text_surface_r, (user_input_rect_r.x + 5, user_input_rect_r.y + 5))  # wyświetl teksty (rownież te ktore użytkownik wprowadza) / text containery
-    window.blit(text_surface_n, (user_input_rect_n.x + 5, user_input_rect_n.y + 5))
-    window.blit(text_surface_d, (user_input_rect_d.x + 5, user_input_rect_d.y + 5))
-    window.blit(text_surface_eta, (user_input_rect_eta.x + 5, user_input_rect_eta.y + 5))
-    window.blit(text_surface_m, (user_input_rect_m.x + 5, user_input_rect_m.y + 5))
-    window.blit(text_surface_time, (user_input_rect_time.x + 5, user_input_rect_time.y + 5))
-    window.blit(text_surface_repeat, (user_input_rect_repeat.x + 5, user_input_rect_repeat.y + 5))
-    window.blit(text_surface_change, (user_input_rect_change.x + 5, user_input_rect_change.y + 5))
-    user_input_rect_r.w = max(40, text_surface_r.get_width() + 10)
-    user_input_rect_n.w = max(40, text_surface_n.get_width() + 10)
-    user_input_rect_d.w = max(40, text_surface_d.get_width() + 10) # ustaw szerokośc prostokatow
-    user_input_rect_eta.w = max(40, text_surface_eta.get_width() + 10)
-    user_input_rect_m.w = max(40, text_surface_m.get_width() + 10)
-    user_input_rect_time.w = max(40, text_surface_time.get_width() + 10)
-    user_input_rect_repeat.w = max(40, text_surface_repeat.get_width() + 10)
-    user_input_rect_change.w = max(40, text_surface_change.get_width() + 10)
-    window.blit(start_text, (975, 335))
-
-    pygame.display.update() #odswieżenie
+        # zderzenia ze scianami
+        for atom in atoms:
+            if atom.x + atom.r + d >= right_wall:  # prawa
+                atom.x_speed = -atom.x_speed
+                atom.x = right_wall - atom.r - math.floor(1/10 * r)
+            elif atom.x - atom.r + d <= left_wall:  # lewa
+                atom.x_speed = -atom.x_speed
+                atom.x = left_wall + atom.r + math.floor(1/10 * r)
+            if atom.y - atom.r + d <= up_wall:  # gorna
+                atom.y_speed = -atom.y_speed
+                atom.y = up_wall + atom.r + math.floor(1/10 * r)
+            elif atom.y + atom.r + d >= down_wall:  # dolna
+                atom.y_speed = -atom.y_speed
+                atom.y = down_wall - atom.r - math.floor(1/10 * r)
+            atom.drawing_circle(main.window, atom)
+        pygame.display.update()  # odswieżenie
+        loop_time += 1
+    czestosc_zderzen = DeltaN / time #ZMIENIŃ TIME JAK OGARNIEMY DELTAT !!!!
+    return sr_droga, czestosc_zderzen, n # zwracamy wartosci do tablicy ( 1) srednia droga, 2) czestosc zderzen, 3) liczba atomow)
