@@ -62,19 +62,19 @@ def simulation_func(r, n, d, eta, M, time):
         main.window.blit(list_3, (value_info_rect_2.x + 5, value_info_rect_2.y + 5))
         main.window.blit(list_4, (value_info_rect_3.x + 5, value_info_rect_3.y + 5))
         # zderzenia między kulkami
-        for i in range(len(atoms)):  # przelatujemy przez wszystkie mozliwe zderzenia bez powtorzen
-            atoms[i].x += atoms[i].x_speed  # testowe latanie
+        for i in range(len(atoms)):  # przelatujemy przez wszystkie zderzenia
+            atoms[i].x += atoms[i].x_speed  #ruch atomow  
             atoms[i].y += atoms[i].y_speed
             for j in range(len(atoms)):
                 if i > j:
                     if func.distance(atoms[i].x, atoms[i].y, atoms[j].x,
-                                     atoms[j].y) <= 2 * r + math.floor(1/10 * r):  # sprawdzamy czy się zderzyly
+                                     atoms[j].y) <= 2 * r + math.floor(1/10 * r):  # sprawdzamy czy się zderzyly 
                         if j == 0:
                             DeltaN += 1
                             tab_droga_swobodna.append(droga_swobodna)
                             droga_swobodna = 0
                             sr_droga = sum(tab_droga_swobodna) / DeltaN
-                        tmp_x = int(atoms[i].x_speed)
+                        tmp_x = int(atoms[i].x_speed)  #zamiana wektorow predkosci
                         atoms[i].x -= atoms[i].x_speed
                         atoms[j].x -= atoms[j].x_speed
                         atoms[i].x_speed = int(atoms[j].x_speed)
