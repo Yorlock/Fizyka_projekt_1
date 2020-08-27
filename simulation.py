@@ -106,5 +106,5 @@ def simulation_func(r, n, d, eta, M, time):
             atom.drawing_circle(main.window, atom)
         pygame.display.update()  # odswieżenie
         loop_time += 1
-    czestosc_zderzen = DeltaN / time #ZMIENIŃ TIME JAK OGARNIEMY DELTAT !!!!
+    czestosc_zderzen = DeltaN * M / time
     return sr_droga, czestosc_zderzen, n # zwracamy wartosci do tablicy ( 1) srednia droga, 2) czestosc zderzen, 3) liczba atomow)
