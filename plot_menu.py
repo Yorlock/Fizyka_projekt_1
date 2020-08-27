@@ -19,15 +19,14 @@ def plot_menu(numAtoms, ave_s, freq):
     freq_info = 'Częstość zderzeń'
     numAtoms_info = 'Liczba atomów'
     exit_info = 'WYJDŹ'
-    #  exit_info_rect = pygame.Rect(575, 650, 280, 96)
     text_ave_s = info_font.render(ave_s_info, True, (0, 0, 0))
     text_numAtoms = info_font.render(numAtoms_info, True, (0, 0, 0))
     text_freq = info_font.render(freq_info, True, (0, 0, 0))
     while True:
         clock.tick(FPS)
         mouse = pygame.mouse.get_pos()
-        for event in pygame.event.get():  # eventy czyli np ruszenie muszką, klikniecie czegoś, wpisanie
-            if event.type == pygame.QUIT:  # klikniecie "X" = wyjscie z programu
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -40,7 +39,7 @@ def plot_menu(numAtoms, ave_s, freq):
             text_exit = main.button_font.render(exit_info, True, (155, 255, 155))
         pygame.display.flip()
         main.window.fill((0, 0, 0))
-        main.window.blit(surf_left, (125, 100))  # wyswietla wykres
+        main.window.blit(surf_left, (125, 100))
         main.window.blit(surf_right, (725, 100))
         main.window.blit(text_exit, (575, 650))
         main.window.blit(pygame.transform.rotate(text_ave_s, 90), (130, 305))
