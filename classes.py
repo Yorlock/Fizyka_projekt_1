@@ -25,7 +25,7 @@ class Plot: #  wykres
 
 
 
-class Atom:  # stworz obiekt kulka/atom
+class Atom:  # stworz kulke
     def __init__(self, r, color, right, down, up, left, atoms, rgb):
         import random
         import math
